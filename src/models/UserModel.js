@@ -30,7 +30,7 @@ const userSchema = new Schema({
   role:{
     type: String,
     default: "seeker",
-    enum: ["seeker","ownder","admin"]
+    enum: ["seeker","owner","admin"]
   },
   lookingForPartner:{
     type: Boolean,

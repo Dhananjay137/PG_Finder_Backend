@@ -1,0 +1,23 @@
+const mailer = require("nodemailer")
+require("dotenv").config()
+
+const mailSend = async (to,subject,text) => {
+  const transpoter = mailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
+  })
+  const mailOptions = {
+    to:to,
+    subject:subject,
+    text:text
+  }
+
+  const mailResponse = await transpoter.sendMail(mailOptions)
+  console.log(mailResponse)
+  return mailResponse
+}
+
+module.exports = mailSend
