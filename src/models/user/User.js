@@ -17,7 +17,9 @@ const userSchema = new Schema({
   email:{
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true
   },
   contact:{
     type: String,
@@ -25,12 +27,13 @@ const userSchema = new Schema({
   },
   password:{
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   role:{
     type: String,
-    default: "seeker",
-    enum: ["seeker","owner","admin"]
+    enum: ["SEEKER","OWNER","ADMIN"],
+    default: "SEEKER"
   },
   lookingForPartner:{
     type: Boolean,
@@ -42,8 +45,9 @@ const userSchema = new Schema({
   },
   status:{
     type: String,
-    enum:["active","inactive","deleted","blocked"]
+    enum:["ACTIVE","INACTIVE","DELETED","BLOCKED"],
+    default: "INACTIVE"
   },
-  
-})
-module.exports = mongoose.model('users',userSchema)
+},{timestamps: true})
+
+module.exports = mongoose.model('user',userSchema)

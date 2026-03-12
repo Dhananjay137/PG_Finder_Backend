@@ -1,4 +1,5 @@
-const userSchema = require("../models/UserModel")
+//const userSchema = require("../models/UserModel")
+const userSchema = require("../models/user/User")
 const bcrypt = require("bcrypt")
 const mailSend = require("../utils/MailUtil")
 
