@@ -12,7 +12,20 @@ const registerUser = async (req, res) => {
 
     if(!savedUser) return res.status(404).json({message: "user is enable to register"})
 
-      await mailSend(savedUser.email,"Welcome to our app","Thank you for registering with our app.")
+    const logoUrl = "https://mir-s3-cdn-cf.behance.net/projects/404/8af6e4244264305.Y3JvcCwyMjA0LDE3MjQsOTIsMA.png";
+
+const htmlContent = `
+  <div style="font-family: Arial, sans-serif; text-align: center;">
+    <!-- Use the full web URL here -->
+    <img src="${logoUrl}" alt="PG Finder Logo" width="150" style="margin-bottom: 20px;">
+    
+    <h1 style="color: #27ae60;">Welcome to PG Finder!</h1>
+    <p>Your registration was successful.</p>
+  </div>
+`;
+
+
+    await mailSend(savedUser.email,"Welcome to our app","Thank you for registering with our app.",htmlContent)
 
     res.status(201).json({
       message: "user created successfully!",
