@@ -12,6 +12,11 @@ const bookingDocumentSchema = new Schema({
     enum: ["AADHAR","PAN","PASSPORT","OTHER"],
     required: true
   },
+  fileUrl: {
+    type: "String",
+    required: true,
+    trim: true
+  },
   verificationStatus: {
     type: String,
     enum: ["PENDING","VERIFIED","REJECTED"],

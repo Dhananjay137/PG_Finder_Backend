@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const nearbyAmenitySchema = new Schema({
-  // FK (Core_Property) - Link to core property table
   propertyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'coreProperty',
@@ -40,7 +39,7 @@ const nearbyAmenitySchema = new Schema({
     required: true
   }
 }, { 
-  timestamps: true // Tracks when these were added/updated
+  timestamps: true
 });
 
 module.exports = mongoose.model('nearbyAmenity', nearbyAmenitySchema);
