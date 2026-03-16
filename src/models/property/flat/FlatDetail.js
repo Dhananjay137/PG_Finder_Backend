@@ -24,6 +24,8 @@ const flatDetailSchema = new Schema({
   facing: { type: String },// North, East, etc..
   buildUpArea: { type: Number },// Area in Squre feet
   totalRoom: { type: Number },
+  bathroomCount: { type: Number, required: true },
+  balconyCount: { type: Number, required: true },
 
   availableFrom: {
     type: Date,
@@ -51,6 +53,18 @@ const flatDetailSchema = new Schema({
     enum: ["FULLY","SEMI","UNFURNISHED"],
     required: true
   },
+  waterSupply: { 
+    type: String, 
+    enum: ["CORPORATION","BOREWELL","BOTH"], 
+    default: "BOTH" 
+  },
+  amenities: {
+    type: [String],
+    enum:["GYM","NON_VEG_ALLOWED","LIFT","INTERCOM","SWIMMING_POOL","CLUB_HOUSE","SERVANT_ROOM","PIPED_GAS","PARK","SHOPPING_CENTER","RESERVED_PARKING","POWER_BACKUP","CCTV_SECURITY","VISITOR_PARKING", "FIRE_SAFETY"],
+    required: true,
+  default: [] // Good practice: start with an empty array if none selected
+},
+
   description: {
     type: String,
     trim: true

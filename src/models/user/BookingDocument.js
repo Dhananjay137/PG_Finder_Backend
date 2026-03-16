@@ -2,9 +2,14 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const bookingDocumentSchema = new Schema({
-  bookingID: {
+  // bookingID: {
+  //   type: mongoose.Types.ObjectId,
+  //   ref: "booking",
+  //   required: true
+  // },
+  userID: {
     type: mongoose.Types.ObjectId,
-    ref: "booking",
+    ref: "user",
     required: true
   },
   documentName: {

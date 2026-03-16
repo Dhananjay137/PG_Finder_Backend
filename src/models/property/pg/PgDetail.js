@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const pgDetailSchema = new Schema({
   propertyId: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'CoreProperty', 
+    ref: 'coreProperty', 
     required: true 
   },
   availableFor: {
@@ -12,10 +12,10 @@ const pgDetailSchema = new Schema({
     enum: ["BOYS","GIRLS","CO-LIVING"],
     required: true
   },
-  availableFrom: {
-    type: Date,
-    required: true
-  },
+  // availableFrom: {
+  //   type: Date,
+  //   required: true
+  // },
   gateClosingTime: {
     type: String,
     trim: true,
@@ -26,7 +26,7 @@ const pgDetailSchema = new Schema({
     default: 0
   },
   rentLockInMonth: {
-    type: number,
+    type: Number,
     default: 0
   },
   noGuardianStay: {
@@ -49,6 +49,11 @@ const pgDetailSchema = new Schema({
     enum: ["STUDENT","WORKING","BOTH"],
     default: "BOTH"
   },
+  amenities: [{
+    type: String,
+    enum: ["LAUNDRY", "RO_WATER", "ROOM_CLEANING", "KITCHEN_ACCESS", "POWER_BACKUP", "LIFT", "WIFI", "WATER_COOLER", "FRIDGE", "MICROWAVE", "FIRST_AID", "WARDEN", "SECURITY_GUARD", "CCTV", "GYM"],
+    required: true
+}],
   description: {
     type: String,
     trim: true

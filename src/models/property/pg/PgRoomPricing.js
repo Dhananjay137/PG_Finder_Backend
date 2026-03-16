@@ -22,7 +22,15 @@ const pgRoomPricingSchema = new Schema({
 
   // extra: Count of total beds vs available beds for this sharing type
   totalBeds: { type: Number, default: 1},
-  availableBeds: { type: Number, default: 1}
+  availableBeds: { type: Number, default: 1},
+
+  amenities: [{
+    type: String,
+    enum: ["TELEVISION", "AC_HEATING", "SINGLE_BED", "MATTRESS_PILLOW", "BLANKET", "TABLE_CHAIR", "SIDE_TABLE", "CUPBOARD", "HOT_WATER"],
+    required: true
+  }],
+
+  availableFrom: { type:Date, required: true}
 
 },{ timestamps: true })
 

@@ -5,17 +5,15 @@ const mailSend = require("../utils/MailUtil")
 
 const registerUser = async (req, res) => {
   try {
-    console.log("1")
     const hashedPassword = await bcrypt.hash(req.body.password,10)
-    console.log("2")
+    
     const savedUser = await userSchema.create({...req.body, password:hashedPassword})
-    console.log("3")
 
     if(!savedUser) return res.status(404).json({message: "user is enable to register"})
 
     const logoUrl = "https://mir-s3-cdn-cf.behance.net/projects/404/8af6e4244264305.Y3JvcCwyMjA0LDE3MjQsOTIsMA.png";
 
-const htmlContent = `
+    const htmlContent = `
   <div style="font-family: Arial, sans-serif; text-align: center;">
     <!-- Use the full web URL here -->
     <img src="${logoUrl}" alt="PG Finder Logo" width="150" style="margin-bottom: 20px;">
@@ -23,7 +21,7 @@ const htmlContent = `
     <h1 style="color: #27ae60;">Welcome to PG Finder!</h1>
     <p>Your registration was successful.</p>
   </div>
-`;
+  `;
 
 
     await mailSend(savedUser.email,"Welcome to our app","Thank you for registering with our app.",htmlContent)
@@ -34,9 +32,10 @@ const htmlContent = `
     })
 
   } catch(err) {
+    console.log(err)
     res.status(500).json({
       message: "error while creating user",
-      err: err
+      error: err
     })
   }
 }
@@ -70,14 +69,80 @@ const loginUser = async (req, res) => {
     }
 
   } catch(err) {
+    console.log(err)
+
     res.status(500).json({
       message: "error while logging in",
       err: err
     })
   }
 }
+const getAllUser = async(req, res) => {
+  try {
+    let { role, status } = req.query
+    let query = {}
+    if(role){
+      query.role = role.toUpperCase()
+    }
+    if(status){
+      query.status = status.toUpperCase()
+    }
+    const data = await userSchema.find(query)
+    res.status(200).json({
+      message: "data fetched successfully",
+      data: data
+    })
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({
+      message: "error while fetching data",
+      error: err
+    })
+  }
+}
+
+const updateUser = async(req, res) => {
+  try {
+    const updatedData = await userSchema.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { runValidators: true, returnDocument: true}
+    )
+    res.status(200).json({
+      message: "data updated successfully",
+      data: updatedData
+    })
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({
+      message: "error while updating data",
+      error: err
+    })
+  }
+}
+
+const deleteUser = async(req, res) => {
+  try {
+    const deletedData = await userSchema.findByIdAndDelete(req.params.id)
+    res.status(200).json({
+      message: "data deleted successfully",
+    })
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({
+      message: "error while deleting data",
+      error: err
+    })
+  }
+}
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  getAllUser,
+  updateUser,
+  deleteUser,
 }

@@ -12,6 +12,11 @@ const bookingSchema = new Schema({
     ref: "coreProperty",
     required: true
   },
+  bookingDocumentID:{
+    type: mongoose.Types.ObjectId,
+    ref: "bookingDocument",
+    required: true
+  },
   
   // extra
   pgRoomPricingID: {
