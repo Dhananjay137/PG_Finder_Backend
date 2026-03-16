@@ -2,6 +2,7 @@
 const userSchema = require("../models/user/User")
 const bcrypt = require("bcrypt")
 const mailSend = require("../utils/MailUtil")
+const uploadToCloudinary = require("../utils/Cloudinary")
 
 const registerUser = async (req, res) => {
   try {
@@ -42,6 +43,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
+    //console.log('req.body',req)
     const {email, password} = req.body
     const foundUserFromEmail = await userSchema.findOne({email:email})
     console.log(foundUserFromEmail)
@@ -104,11 +106,20 @@ const getAllUser = async(req, res) => {
 
 const updateUser = async(req, res) => {
   try {
+    let data = { ...req.body }
+
+    if(req.file){
+      const cloudinaryResponse = await uploadToCloudinary(req.file.path)
+      //console.log(cloudinaryResponse)
+      data.profilePic = cloudinaryResponse.secure_url;
+    }
+    
     const updatedData = await userSchema.findByIdAndUpdate(
       req.params.id,
-      req.body,
-      { runValidators: true, returnDocument: true}
+      data,
+      { runValidators: true, returnDocument: 'after'}
     )
+    
     res.status(200).json({
       message: "data updated successfully",
       data: updatedData
