@@ -3,6 +3,8 @@ const userSchema = require("../models/user/User")
 const bcrypt = require("bcrypt")
 const mailSend = require("../utils/MailUtil")
 const uploadToCloudinary = require("../utils/Cloudinary")
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 const registerUser = async (req, res) => {
   try {
@@ -46,16 +48,19 @@ const loginUser = async (req, res) => {
     //console.log('req.body',req)
     const {email, password} = req.body
     const foundUserFromEmail = await userSchema.findOne({email:email})
-    console.log(foundUserFromEmail)
+    //console.log(foundUserFromEmail)
 
     if(foundUserFromEmail){
 
       const isPasswordMatched = await bcrypt.compare(password, foundUserFromEmail.password)
 
       if(isPasswordMatched){
+        const token = jwt.sign(foundUserFromEmail.toObject(), process.env.JWT_SECRET, { expiresIn: 60 })
+
         res.status(200).json({
           message: "Login Success",
-          data: foundUserFromEmail,
+          //data: foundUserFromEmail,
+          token: token,
           role: foundUserFromEmail.role
         })
       } else {
@@ -76,6 +81,22 @@ const loginUser = async (req, res) => {
     res.status(500).json({
       message: "error while logging in",
       err: err
+    })
+  }
+}
+const getUser = async(req, res) => {
+  try {
+    const data = await userSchema.findById(req.params.id)
+    res.status(200).json({
+      message: "data fetched successfully",
+      data: data
+    })
+
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({
+      message: "error while fetching data",
+      error: err
     })
   }
 }
@@ -113,7 +134,7 @@ const updateUser = async(req, res) => {
       //console.log(cloudinaryResponse)
       data.profilePic = cloudinaryResponse.secure_url;
     }
-    
+    //console.log(data)
     const updatedData = await userSchema.findByIdAndUpdate(
       req.params.id,
       data,
@@ -154,6 +175,7 @@ module.exports = {
   registerUser,
   loginUser,
   getAllUser,
+  getUser,
   updateUser,
   deleteUser,
 }
