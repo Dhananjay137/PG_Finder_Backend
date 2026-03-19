@@ -37,6 +37,9 @@ app.use('/feedback',feedbackRouter)
 const feedbackReportRouter = require('./src/routes/FeedbackReportRoutes')
 app.use('/feedbackReport',feedbackReportRouter)
 
+const dashboardRouter = require('./src/routes/DashboardRoutes')
+app.use('/dashboard',dashboardRouter)
+
 const PORT = process.env.PORT
 app.listen(PORT,() => {
   console.log(`server started on port ${PORT}`)
