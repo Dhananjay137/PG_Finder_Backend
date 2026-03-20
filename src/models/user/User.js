@@ -44,7 +44,7 @@ const userSchema = new Schema({
   },
   status:{
     type: String,
-    enum:["ACTIVE","INACTIVE","DELETED","BLOCKED"],
+    enum:["ACTIVE","INACTIVE","BLOCKED"],
     default: "INACTIVE"
   },
 },{timestamps: true})

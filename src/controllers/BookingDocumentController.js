@@ -1,11 +1,22 @@
 const bookingDocumentSchema = require('../models/user/BookingDocument')
+const uploadToCloudinary = require('../utils/Cloudinary')
 
 const createBookingDocument = async(req, res) => {
   try {
-    const data = await bookingDocumentSchema.create(req.body)
+    let data = {...req.body}
+    console.log(data)
+
+    if(req.file){
+      const cloudinaryResponse = await uploadToCloudinary(req.file.path)
+      console.log(cloudinaryResponse)
+      data.fileUrl = cloudinaryResponse.secure_url
+    }
+    
+    const updatedData = await bookingDocumentSchema.create(data)
+
     res.status(201).json({
       message: "successfully booked",
-      data: data
+      data: updatedData
     })
 
   } catch(err) {

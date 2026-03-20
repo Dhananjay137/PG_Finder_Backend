@@ -73,7 +73,7 @@ const updateProperty = async(req, res) => {
     const updatedData = await corePropertySchema.findByIdAndUpdate(
       req.params.id,
       req.body,
-      {runValidators: true, new: true}
+      {runValidators: true, returnDocument: 'after'}
     )
 
     if(updatedData){
