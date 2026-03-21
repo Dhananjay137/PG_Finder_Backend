@@ -46,7 +46,7 @@ const corePropertySchema = new Schema({
   // Updated status for Admin Approval Workflow
   status: {
     type: String,
-    enum: ['PENDING','APPROVED','REJECTED','DEACTIVATED','RENT_OUT'],
+    enum: ['PENDING','APPROVED','REJECTED','DEACTIVATED','RENT_OUT','BLOCKED'],
     default: 'PENDING' // New listings start as Pending
   },
   isVerified: {

@@ -97,9 +97,16 @@ const getAllProperty = async(req, res) => {
 
 const updateProperty = async(req, res) => {
   try {
+    let data = {...req?.body}
+    if(req?.body?.status == 'APPROVED'){
+      data.isVerified = true
+    }
+    if(req?.body?.status == 'PENDING'){
+      data.isVerified = false
+    }
     const updatedData = await corePropertySchema.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      data,
       {runValidators: true, returnDocument: 'after'}
     )
 
