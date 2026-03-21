@@ -32,7 +32,7 @@ const corePropertySchema = new Schema({
   }],
 
   // vist schedule
-   visitSchedule: {
+  visitSchedule: {
     dayType: {
       type: String,
       enum: ["EVERYDAY", "WEEKDAYS", "WEEKENDS"],

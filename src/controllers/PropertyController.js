@@ -1,12 +1,36 @@
 const { default: mongoose } = require("mongoose")
 const corePropertySchema = require("../models/property/CoreProperty")
 const nearbyAmenity = require("../models/property/NearbyAmenity")
+const uploadToCloudinary = require('../utils/Cloudinary')
 
 const createProperty = async(req, res) => {
 
   try {
+    let cloundinaryResponse = []
+    let data = {...req?.body}
+    //  console.log(req?.body)
+    //  console.log(req?.files)
 
-    const savedProperty = await corePropertySchema.create(req.body)
+    if(req?.files){
+      cloundinaryResponse = await Promise.all(
+        req.files.map((file ) => uploadToCloudinary(file.path))
+      )
+    }
+    const updatedGallery = [data.gallery].flat().map((imgString,i)=> {
+      //console.log(imgString)
+      let imgObj = JSON.parse(imgString)
+      imgObj.fileUrl = cloundinaryResponse[i].secure_url
+      return imgObj
+    })
+
+    //console.log(updatedGallery)
+    data.gallery = updatedGallery
+    data.visitSchedule = JSON.parse(req?.body?.visitSchedule)
+
+    //console.log(data)
+
+
+    const savedProperty = await corePropertySchema.create(data)
     const propertyID = savedProperty._id
 
     // await nearbyAmenity.create({...amenities, propertyID})
@@ -29,7 +53,7 @@ const createProperty = async(req, res) => {
 // simple get & filter get: city, type, status
 const getAllProperty = async(req, res) => {
   try {
-    const { status, type, city, page = 1, limit=10 } = req.query
+    const { id, status, type, city, page = 1, limit=10 } = req.query
 
     const query = {}
 
@@ -41,6 +65,9 @@ const getAllProperty = async(req, res) => {
     }
     if(city) {
       query.city = { $regex: city, $options: 'i'}
+    }
+    if(id){
+      query.ownerId = id
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit)

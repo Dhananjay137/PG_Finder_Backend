@@ -36,17 +36,20 @@ const getAllBookings = async(req, res) => {
 }
 const getBookingById = async(req, res) => {
   try {
-    const { userId, propertyId, status } = req.query
+    const { ownerId, seekerId, propertyId, status } = req.query
     const query = {}
 
-    if(userId){
-      query.userID = userId
+    if(seekerId){
+      query.seekerID = seekerId
     }
     if(propertyId){
       query.propertyID = propertyId
     }
+    if(ownerId){
+      query.ownerID = ownerId
+    }
     if(status){
-      query.status = status
+      query.status = status.toUpperCase()
     }
 
     const data = await bookingSchema.find(query)
