@@ -20,7 +20,7 @@ const addPgDetail = async(req, res) => {
 }
 const getPgDetail = async(req, res) => {
   try {
-    const data = await pgDetailSchema.findById(req.params.id)
+    const data = await pgDetailSchema.findOne({ propertyId: req.params.id }).populate('propertyId')
 
     res.status(200).json({
       message: "data fetched successfully",

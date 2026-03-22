@@ -19,7 +19,7 @@ const flatDetailSchema = new Schema({
     required: true
   },
   floorNo: { type: Number },
-  totalFloors: { type: Number },
+  totalFloor: { type: Number },
   propertyAge: { type: Number },// Age in year
   facing: { type: String },// North, East, etc..
   buildUpArea: { type: Number },// Area in Squre feet

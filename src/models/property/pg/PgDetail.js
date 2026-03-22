@@ -12,10 +12,10 @@ const pgDetailSchema = new Schema({
     enum: ["BOYS","GIRLS","CO-LIVING"],
     required: true
   },
-  // availableFrom: {
-  //   type: Date,
-  //   required: true
-  // },
+  availableFrom: {
+    type: Date,
+    required: true
+  },
   gateClosingTime: {
     type: String,
     trim: true,
