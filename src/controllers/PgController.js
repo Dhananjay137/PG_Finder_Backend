@@ -90,9 +90,9 @@ const addPgRoom = async(req, res) => {
     })
   }
 }
-const getAllPgRooms = async(req, res) => {
+const getAllPgRoomsById = async(req, res) => {
   try {
-    const data = await pgRoomPricingSchema.find()
+    const data = await pgRoomPricingSchema.find({ propertyId: req.params.id })
     res.status(200).json({
       message: "data found successfully",
       data: data
@@ -148,7 +148,7 @@ module.exports = {
   updatePgDetail,
   deletePgDetail,
   addPgRoom,
-  getAllPgRooms,
+  getAllPgRoomsById,
   updatePgRoom,
   deletePgRoom
 }

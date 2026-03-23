@@ -19,7 +19,7 @@ const addFlatDetail = async(req, res) => {
 }
 const getFlatDetail = async(req, res) => {
   try {
-    const data = await flatDetailSchema.findById(req.params.id).populate("propertyId")
+    const data = await flatDetailSchema.findOne({ propertyId: req.params.id}).populate("propertyId")
 
     if(data){
       res.status(200).json({

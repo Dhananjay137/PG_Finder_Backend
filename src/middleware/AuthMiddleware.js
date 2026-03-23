@@ -3,6 +3,10 @@ require('dotenv').config()
 
 const validateToken = async(req, res, next) => {
   try {
+    console.log(req?.path)
+    if(req?.path === '/user/login' || req?.path === '/user/register'){
+      return next()
+    }
     //console.log('req.headers:',req.headers)
     let token = req.headers.authorization
     //console.log('token:',token)
@@ -17,6 +21,9 @@ const validateToken = async(req, res, next) => {
         // verify token using jwt
         const decodedData = jwt.verify(tokenValue, process.env.JWT_SECRET)
         //console.log('decodedData: ',decodedData)
+
+        req.user = decodedData
+
         next()
       } else {
         res.status(401).json({

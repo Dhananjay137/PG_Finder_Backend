@@ -55,13 +55,15 @@ const loginUser = async (req, res) => {
       const isPasswordMatched = await bcrypt.compare(password, foundUserFromEmail.password)
 
       if(isPasswordMatched){
-        const token = jwt.sign(foundUserFromEmail.toObject(), process.env.JWT_SECRET, { expiresIn: 60 })
+        const token = jwt.sign(foundUserFromEmail.toObject(), process.env.JWT_SECRET, { expiresIn: 60*60*24*7 })
 
         res.status(200).json({
           message: "Login Success",
           //data: foundUserFromEmail,
           token: token,
-          role: foundUserFromEmail.role
+          role: foundUserFromEmail.role,
+          firstName: foundUserFromEmail.firstName,
+          lastName : foundUserFromEmail.lastName
         })
       } else {
         res.status(401).json({
@@ -86,7 +88,7 @@ const loginUser = async (req, res) => {
 }
 const getUser = async(req, res) => {
   try {
-    const data = await userSchema.findById(req.params.id)
+    const data = await userSchema.findById(req.user._id)
     res.status(200).json({
       message: "data fetched successfully",
       data: data

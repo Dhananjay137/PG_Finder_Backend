@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const validateToken = require('./src/middleware/AuthMiddleware')
 
 require('dotenv').config({debug:true})
 
@@ -9,6 +10,8 @@ app.use(cors())
 
 const DBConnection = require('./src/utils/DBConnection')
 DBConnection()
+
+app.use(validateToken)
 
 const userRouter = require('./src/routes/UserRoutes')
 app.use('/user',userRouter)

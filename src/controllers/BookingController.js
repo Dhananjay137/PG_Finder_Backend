@@ -52,7 +52,12 @@ const getBookingById = async(req, res) => {
       query.status = status.toUpperCase()
     }
 
-    const data = await bookingSchema.find(query)
+    const data = await bookingSchema.find(query).populate([
+      {path: 'propertyID', select: 'propertyName propertyType'},
+      {path: 'seekerID', select: 'firstName lastName'},
+      {path: 'pgRoomPricingID', select: 'roomType'},
+      {path: 'bookingDocumentID', select: 'documentName fileUrl'}
+    ])
 
     res.status(200).json({
       message: "data fetched successfully",

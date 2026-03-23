@@ -54,6 +54,7 @@ const createProperty = async(req, res) => {
 const getAllProperty = async(req, res) => {
   try {
     const { id, status, type, city, page = 1, limit=10 } = req.query
+    const user = req.user
 
     const query = {}
 
@@ -67,7 +68,7 @@ const getAllProperty = async(req, res) => {
       query.city = { $regex: city, $options: 'i'}
     }
     if(id){
-      query.ownerId = id
+      query.ownerId = user._id
     }
 
     const skip = (parseInt(page) - 1) * parseInt(limit)
