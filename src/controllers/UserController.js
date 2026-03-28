@@ -135,6 +135,7 @@ const updateUser = async(req, res) => {
       const cloudinaryResponse = await uploadToCloudinary(req.file.path)
       //console.log(cloudinaryResponse)
       data.profilePic = cloudinaryResponse.secure_url;
+      //console.log(data)
     }
     //console.log(data)
     const updatedData = await userSchema.findByIdAndUpdate(
@@ -142,10 +143,15 @@ const updateUser = async(req, res) => {
       data,
       { runValidators: true, returnDocument: 'after'}
     )
+
+    const token = jwt.sign(updatedData.toObject(), process.env.JWT_SECRET, { expiresIn: 60*60*24*7 })
     
     res.status(200).json({
       message: "data updated successfully",
-      data: updatedData
+      token: token,
+      role: updatedData.role,
+      firstName: updatedData.firstName,
+      lastName : updatedData.lastName
     })
 
   } catch(err) {
