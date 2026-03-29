@@ -1,7 +1,10 @@
 const mailer = require("nodemailer")
+const path = require('path');
+const hbs = require("nodemailer-express-handlebars").default || require("nodemailer-express-handlebars");
+
 require("dotenv").config()
 
-const mailSend = async (to,subject,text,html) => {
+const mailSend = async (to,subject,templateName,context) => {
   const transporter = mailer.createTransport({
     service: "gmail",
     auth: {
@@ -9,17 +12,25 @@ const mailSend = async (to,subject,text,html) => {
       pass: process.env.EMAIL_PASSWORD
     }
   })
+
+  transporter.use('compile', hbs({
+    viewEngine: {
+      extName: '.html',
+      partialsDir: path.resolve('./src/templates/'),
+      defaultLayout: false,
+    },
+    viewPath: path.resolve('./src/templates/'),
+    extName: '.html',
+  }));
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to:to,
     subject:subject,
-    text:text,
-    html:html,
+    template: templateName,
+    context: context
   }
 
-  // const mailResponse = await transpoter.sendMail(mailOptions)
-  // console.log(mailResponse)
-  // return mailResponse
   try {
     const mailResponse = await transporter.sendMail(mailOptions);
     console.log("Email sent successfully:", mailResponse.messageId);

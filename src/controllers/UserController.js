@@ -86,6 +86,64 @@ const loginUser = async (req, res) => {
     })
   }
 }
+const forgetPassword = async(req, res) => {
+  try {
+    const { email } = req.body
+
+    if(!email) return res.status(400).json({message: 'email is not provided'})
+
+    const foundUserFromEmail = await userSchema.findOne({ email: email})
+
+    if(!foundUserFromEmail){
+      return res.status(400).json({message: 'email not found!'})
+    } else {
+      const token = jwt.sign(foundUserFromEmail.toObject(),process.env.JWT_SECRET,{ expiresIn: 60*5})
+
+      const url = `http://localhost:5173/password-reset/${token}`
+
+      await mailSend(
+        foundUserFromEmail.email,
+        'Password Reset',
+        'password-reset',
+        { resetLink: url}
+      )
+
+      res.status(200).json({
+        message: `reset link has been sent to ${foundUserFromEmail.email}`
+      })
+    }
+  } catch(err) {
+    console.log(err)
+    res.status(500).json({
+      message: "error while changing password",
+      error: err
+    })
+  }
+}
+const resetPassword = async(req, res) => {
+  const { newPassword, token } = req.body
+  try {
+    const decodedUser = jwt.verify(token, process.env.JWT_SECRET)
+    const hashedPassword = await bcrypt.hash(newPassword,10)
+
+    const updatedUser = await userSchema.findByIdAndUpdate(
+      decodedUser._id,
+      { password: hashedPassword },
+      { runValidators: true, returnDocument: 'after' }
+    )
+
+    res.status(200).json({
+      message: 'password reset successfully !'
+    })
+
+  } catch(err) {
+    console.log(err)
+    res.status(500).json({
+      message: 'error while reset password',
+      error: err
+    })
+  }
+}
 const getUser = async(req, res) => {
   try {
     const data = await userSchema.findById(req.user._id)
@@ -182,6 +240,8 @@ const deleteUser = async(req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  forgetPassword,
+  resetPassword,
   getAllUser,
   getUser,
   updateUser,

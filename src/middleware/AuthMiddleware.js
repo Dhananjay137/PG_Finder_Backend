@@ -4,7 +4,7 @@ require('dotenv').config()
 const validateToken = async(req, res, next) => {
   try {
     console.log(req?.path)
-    if(req?.path === '/user/login' || req?.path === '/user/register'){
+    if(req?.path === '/user/login' || req?.path === '/user/register' || req?.path === '/user/password-forget' || req?.path === '/user/password-reset'){
       return next()
     }
     //console.log('req.headers:',req.headers)
