@@ -1,5 +1,7 @@
 const userSchema = require('../models/user/User')
 const propertySchema = require('../models/property/CoreProperty')
+const bookingSchema = require('../models/interaction/Booking')
+const mongoose = require('mongoose');
 
 const getDashboardStats = async(req, res) => {
   try {
@@ -47,7 +49,52 @@ const getDashboardStats = async(req, res) => {
     })
   }
 }
+const getOwnerDashboardStats = async(req, res) => {
+  const user = req.user
+  const ownerObjectId = new mongoose.Types.ObjectId(user?._id)
+  console.log('user ID: ',user._id)
+  try{
+    const [
+      totalProperties,
+      propertyStatusBreakdown,
+      propertyTypeBreakdown,
+      bookingStatusBreakdown
+    ] = await Promise.all([
+      propertySchema.countDocuments({ ownerId: user?._id }),
+      propertySchema.aggregate([
+        { $match: { ownerId: ownerObjectId } },
+        { $group: { _id: '$status', count: { $sum: 1} } }
+      ]),
+      propertySchema.aggregate([
+        { $match: { ownerId: ownerObjectId } },
+        { $group: { _id: '$propertyType', count: { $sum: 1 } } }
+      ]),
+      bookingSchema.aggregate([
+        { $match: { ownerID: ownerObjectId } },
+        { $group: { _id: '$status', count: { $sum: 1 } } }
+      ])
+    ])
+
+    res.status(200).json({
+      message: 'data fetched successfully',
+      data: {
+        totalProperties,
+        propertyStatusBreakdown,
+        propertyTypeBreakdown,
+        bookingStatusBreakdown,
+      }
+    })
+
+  } catch(err) {
+    console.log(err)
+    res.status(500).json({
+      message: 'error while fetching',
+      error: err
+    })
+  }
+}
 
 module.exports = {
   getDashboardStats,
+  getOwnerDashboardStats,
 }
