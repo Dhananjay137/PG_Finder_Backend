@@ -36,7 +36,7 @@ const getAllWish = async(req, res) => {
   try {
     let id = req.user?._id
     const data = await wishlistSchema.find({userID: id}).populate('propertyID')
-    console.log(data)
+    //console.log(data)
 
     res.status(200).json({
       message: "data fetched successfully",

@@ -4,19 +4,21 @@ const uploadToCloudinary = require('../utils/Cloudinary')
 const createBookingDocument = async(req, res) => {
   try {
     let data = {...req.body}
-    console.log(data)
+    data.userID = req.user._id
+    //console.log(req?.file)
 
     if(req.file){
       const cloudinaryResponse = await uploadToCloudinary(req.file.path)
-      console.log(cloudinaryResponse)
+      //console.log(cloudinaryResponse)
       data.fileUrl = cloudinaryResponse.secure_url
     }
+    //console.log(data)
     
-    const updatedData = await bookingDocumentSchema.create(data)
+    const savedData = await bookingDocumentSchema.create(data)
 
     res.status(201).json({
       message: "successfully booked",
-      data: updatedData
+      data: savedData
     })
 
   } catch(err) {
@@ -28,9 +30,11 @@ const createBookingDocument = async(req, res) => {
   }
 }
 const getAllBookingDocuments = async(req, res) => {
-  // with query pan add kari devu
   try {
-    const data = await bookingDocumentSchema.find()
+    //console.log(req.user)
+    const query = req?.user?.role === 'SEEKER' ? {userID: req?.user?._id} : {}
+    const data = await bookingDocumentSchema.find(query)
+
     res.status(200).json({
       message: "data fetched successfully",
       data: data

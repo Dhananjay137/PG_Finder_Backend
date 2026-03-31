@@ -15,7 +15,7 @@ const pgRoomPricingSchema = new Schema({
 
   // Financials
   monthlyRent: { type: Number, required: true, min: 0},
-  depositAmount: { type: Number, required: true, min: 0},
+  securityDeposit: { type: Number, required: true, min: 0},
 
   // Availability status for this specific sharing type
   isAvailable: { type: Boolean, default: true},
