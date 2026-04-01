@@ -41,6 +41,11 @@ const bookingSchema = new Schema({
     required: true 
   },
 
+  isFeedbackGiven: {
+    type: Boolean,
+    default: false
+  },
+
   status: {
     type: String,
     enum: ["PENDING","CONFIRMED","CANCELLED","REJECTED","COMPLETED"],

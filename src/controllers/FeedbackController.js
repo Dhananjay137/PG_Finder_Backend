@@ -1,8 +1,19 @@
 const feedbackSchema = require('../models/interaction/Feedback')
+const bookingSchema = require('../models/interaction/Booking')
 
 const createFeedback = async(req, res) => {
+  let id = req?.user?._id
+  let bookingID = req?.params?.bookingID
   try {
-    const createdData = await feedbackSchema.create(req.body)
+    const createdData = await feedbackSchema.create({...req.body,userID: id})
+
+    if(createdData){
+      const bookingData = await bookingSchema.findByIdAndUpdate(
+        bookingID,
+        { isFeedbackGiven: true },
+        { runValidators: true, returnDocument: 'after'}
+      )
+    }
     res.status(201).json({
       message: "data created successfully",
       data: createdData
@@ -18,16 +29,21 @@ const createFeedback = async(req, res) => {
 }
 const getAllFeedback = async(req, res) => {
   try {
-    let { userId, propertyId } = req.query
+    let role = req?.user?.role
+    let { propertyID } = req.query
     let query = {}
 
-    if(userId){
-      query.userId = userId
+    if(role == 'SEEKER'){
+      query.userID = req?.user?._id
     }
-    if(propertyId) {
-      query.propertyId = propertyId
+    if(propertyID) {
+      query.propertyID = propertyID
     }
-    const data = await feedbackSchema.find(query)
+    const data = await feedbackSchema.find(query).sort({ createdAt: -1 }).populate([
+      { path: 'propertyID', select: 'propertyName propertyType' },
+      { path: 'userID', select: 'firstName lastName email fileUrl' }
+    ]);
+
     res.status(200).json({
       message: "data fetched successfully",
       data: data
