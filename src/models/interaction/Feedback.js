@@ -22,6 +22,11 @@ const feedbackSchema = new Schema({
     type: String,
     trim: true,
     required: true
+  },
+  status: {
+    type: String,
+    enum: ['OK','BLOCKED'],
+    default: 'OK'
   }
 },{ timestamps: true })
 

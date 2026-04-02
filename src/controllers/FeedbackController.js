@@ -41,7 +41,7 @@ const getAllFeedback = async(req, res) => {
     }
     const data = await feedbackSchema.find(query).sort({ createdAt: -1 }).populate([
       { path: 'propertyID', select: 'propertyName propertyType' },
-      { path: 'userID', select: 'firstName lastName email fileUrl' }
+      { path: 'userID', select: 'firstName lastName email profilePic' }
     ]);
 
     res.status(200).json({
