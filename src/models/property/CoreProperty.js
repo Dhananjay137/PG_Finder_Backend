@@ -19,8 +19,18 @@ const corePropertySchema = new Schema({
   houseNo: { type: String, trim: true },// property number
   landmarkStreet: { type: String, trim: true },
   city: { type: String, required: true, trim: true},
-  latitude: { type: Number, required: true },
-  longitude: { type: Number, required: true },
+  address: { type: String, required: true, trim: true},
+  location: {
+    type: {
+      type: String,
+      enum: ['Point'], // Must be 'Point'
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number], // Array of numbers: [Longitude, Latitude]
+      required: true
+    }
+  },
   propertyContact: { type: Number, required: true },
   propertyEmail: { type: String, required: true },
 

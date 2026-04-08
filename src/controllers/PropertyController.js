@@ -2,12 +2,14 @@ const { default: mongoose } = require("mongoose")
 const corePropertySchema = require("../models/property/CoreProperty")
 const nearbyAmenity = require("../models/property/NearbyAmenity")
 const uploadToCloudinary = require('../utils/Cloudinary')
+const axios = require('axios');
 
 const createProperty = async(req, res) => {
 
   try {
     let cloundinaryResponse = []
     let data = {...req?.body}
+    console.log(data)
     //  console.log(req?.body)
     //  console.log(req?.files)
 
@@ -27,7 +29,7 @@ const createProperty = async(req, res) => {
     data.gallery = updatedGallery
     data.visitSchedule = JSON.parse(req?.body?.visitSchedule)
 
-    //console.log(data)
+    console.log(data)
 
 
     const savedProperty = await corePropertySchema.create(data)
@@ -45,6 +47,36 @@ const createProperty = async(req, res) => {
 
     res.status(500).json({
       message: "error while adding data",
+      error: err
+    })
+  }
+}
+
+const getNearbyAmenities = async(req, res) => {
+  const { longitude, latitude, propertyName } = req.body
+  const apiKey = process.env.GEOAPIFY_PLACE_API_KEY
+  const categories = 'healthcare,public_transport.train,public_transport.bus,commercial.supermarket,commercial.marketplace,education.school,education.university,education.college,catering,catering.restaurant';
+  const url = `https://api.geoapify.com/v2/places?categories=${categories}&filter=circle:${longitude},${latitude},5000&&bias=proximity:${longitude},${latitude}&limit=50&apiKey=${apiKey}`
+  try{
+    console.log(url)
+    const response = await axios.get(url)
+
+    console.log('response',response.data.features)
+    res.status(200).json({
+      message: 'ok',
+      data: {
+        propertyData: {
+          propertyName,
+          coordinates: { longitude, latitude}
+        },
+        nearbyAminites: response?.data
+      }
+    })
+
+  } catch(err){
+    console.log(err)
+    res.status(500).json({
+      message: 'server error',
       error: err
     })
   }
@@ -150,4 +182,5 @@ module.exports = {
   getAllProperty,
   updateProperty,
   deleteProperty,
+  getNearbyAmenities
 }
