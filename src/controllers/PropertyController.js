@@ -61,7 +61,7 @@ const getNearbyAmenities = async(req, res) => {
     console.log(url)
     const response = await axios.get(url)
 
-    console.log('response',response.data.features)
+    //console.log('response',response.data.features)
     res.status(200).json({
       message: 'ok',
       data: {
@@ -93,7 +93,7 @@ const getAllProperty = async(req, res) => {
     if(status) {
       query.status = status.toUpperCase()
     }
-    if(type) {
+    if(type && type !== 'BOTH') {
       query.propertyType = type.toUpperCase()
     }
     if(city) {
