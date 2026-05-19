@@ -1,48 +1,47 @@
-// FORCE NODE TO PREFER IPV4
-const dns = require('node:dns');
-dns.setDefaultResultOrder('ipv4first');
-
-const mailer = require("nodemailer")
+const axios = require('axios');
+const fs = require('fs');
 const path = require('path');
-const hbs = require("nodemailer-express-handlebars").default || require("nodemailer-express-handlebars");
+const handlebars = require('handlebars');
 
-require("dotenv").config()
+require("dotenv").config();
 
-const mailSend = async (to,subject,templateName,context) => {
-  const transporter = mailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    }
-  })
-
-  transporter.use('compile', hbs({
-    viewEngine: {
-      extName: '.html',
-      partialsDir: path.resolve('./src/templates/'),
-      defaultLayout: false,
-    },
-    viewPath: path.resolve('./src/templates/'),
-    extName: '.html',
-  }));
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to:to,
-    subject:subject,
-    template: templateName,
-    context: context
-  }
-
+const mailSend = async (to, subject, templateName, context) => {
   try {
-    const mailResponse = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", mailResponse.messageId);
-    return mailResponse;
+    // 1. Read your existing HTML template file manually
+    const templatePath = path.resolve(`./src/templates/${templateName}.html`);
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    
+    // 2. Compile the template with Handlebars using your context data
+    const compiledTemplate = handlebars.compile(templateSource);
+    const htmlContent = compiledTemplate(context);
+
+    // 3. Send the email via Brevo's HTTP API (Not blocked by Render)
+    const response = await axios.post(
+      'https://brevo.com',
+      {
+        sender: { 
+          name: "Your App Name", 
+          email: process.env.EMAIL_USER // Your verified Brevo sender email
+        },
+        to: [{ email: to }],
+        subject: subject,
+        htmlContent: htmlContent // Injected HTML string
+      },
+      {
+        headers: {
+          'accept': 'application/json',
+          'api-key': process.env.BREVO_API_KEY,
+          'content-type': 'application/json'
+        }
+      }
+    );
+
+    console.log("Email sent successfully via Brevo API:", response.data.messageId);
+    return response.data;
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error("Error sending email via Brevo API:", error.response ? error.response.data : error.message);
     throw error;
   }
 }
 
-module.exports = mailSend
+module.exports = mailSend;
