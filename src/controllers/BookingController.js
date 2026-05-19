@@ -53,8 +53,10 @@ const getBookingById = async(req, res) => {
     if(status){
       query.status = status.toUpperCase()
     }
+    let data, filterData
 
-    const data = await bookingSchema.find(query).populate([
+    if(req?.user.role === 'OWNER'){
+      data = await bookingSchema.find(query).populate([
       {path: 'propertyID', select: 'propertyName propertyType'},
       {path: 'seekerID', select: 'firstName lastName'},
       {path: 'pgRoomPricingID'},
@@ -64,13 +66,26 @@ const getBookingById = async(req, res) => {
       }
     ])
     
-    const filterData = data.filter(booking => booking.bookingDocumentID !== null)
+    filterData = data.filter(booking => booking.bookingDocumentID !== null)
+    
+    } else {
+      data = await bookingSchema.find(query).populate([
+      {path: 'propertyID', select: 'propertyName propertyType'},
+      {path: 'seekerID', select: 'firstName lastName'},
+      {path: 'pgRoomPricingID'},
+      {
+        path: 'bookingDocumentID',
+        match: { verificationStatus: 'VERIFIED' }
+      }
+    ])
 
+    filterData = data
+    }
+    
     res.status(200).json({
       message: "data fetched successfully",
       data: filterData
     })
-
   } catch(err) {
     console.error(err)
     res.status(500).json({

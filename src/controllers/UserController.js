@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
   //   await mailSend(savedUser.email,"Welcome to our app","Thank you for registering with our app.",htmlContent)
     const context={
       userName:savedUser.firstName+' '+savedUser.lastName,
-      loginLink:'http://localhost:5173/'
+      loginLink:'https://pg-finder-frontend-v8je.onrender.com/'
     }
 
     await mailSend(
@@ -110,7 +110,7 @@ const forgetPassword = async(req, res) => {
     } else {
       const token = jwt.sign(foundUserFromEmail.toObject(),process.env.JWT_SECRET,{ expiresIn: 60*5})
 
-      const url = `http://localhost:5173/password-reset/${token}`
+      const url = `https://pg-finder-frontend-v8je.onrender.com/password-reset/${token}`
 
       await mailSend(
         foundUserFromEmail.email,
