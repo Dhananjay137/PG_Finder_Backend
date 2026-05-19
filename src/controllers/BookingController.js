@@ -58,12 +58,17 @@ const getBookingById = async(req, res) => {
       {path: 'propertyID', select: 'propertyName propertyType'},
       {path: 'seekerID', select: 'firstName lastName'},
       {path: 'pgRoomPricingID'},
-      {path: 'bookingDocumentID'}
+      {
+        path: 'bookingDocumentID',
+        match: { verificationStatus: 'VERIFIED' }
+      }
     ])
+    
+    const filterData = data.filter(booking => booking.bookingDocumentID !== null)
 
     res.status(200).json({
       message: "data fetched successfully",
-      data: data
+      data: filterData
     })
 
   } catch(err) {
