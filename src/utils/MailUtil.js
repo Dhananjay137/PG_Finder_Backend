@@ -20,8 +20,8 @@ const mailSend = async (to, subject, templateName, context) => {
       'https://brevo.com',
       {
         sender: { 
-          name: "Your App Name", 
-          email: process.env.EMAIL_USER // Your verified Brevo sender email
+          name: "PG Finder", 
+          email: process.env.EMAIL_USER
         },
         to: [{ email: to }],
         subject: subject,
