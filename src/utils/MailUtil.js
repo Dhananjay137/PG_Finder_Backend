@@ -1,3 +1,7 @@
+// FORCE NODE TO PREFER IPV4
+const dns = require('node:dns');
+dns.setDefaultResultOrder('ipv4first');
+
 const mailer = require("nodemailer")
 const path = require('path');
 const hbs = require("nodemailer-express-handlebars").default || require("nodemailer-express-handlebars");
