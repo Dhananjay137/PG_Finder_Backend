@@ -7,7 +7,7 @@ require("dotenv").config();
 
 const mailSend = async (to, subject, templateName, context) => {
   try {
-    // 1. Read your existing HTML template file manually
+    // 1. Read existing HTML template file manually
     const templatePath = path.resolve(`./src/templates/${templateName}.html`);
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     
