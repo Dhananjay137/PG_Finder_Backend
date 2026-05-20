@@ -17,7 +17,7 @@ const mailSend = async (to, subject, templateName, context) => {
 
     // 3. Send the email via Brevo's HTTP API (Not blocked by Render)
     const response = await axios.post(
-      'https://brevo.com',
+      'https://api.brevo.com/v3/smtp/email',
       {
         sender: { 
           name: "PG Finder", 
